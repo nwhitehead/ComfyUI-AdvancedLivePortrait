@@ -856,7 +856,7 @@ class ExpressionEditor:
                 "pupil_x": ("FLOAT", {"default": 0, "min": -15, "max": 15, "step": 0.5, "display": display}),
                 "pupil_y": ("FLOAT", {"default": 0, "min": -15, "max": 15, "step": 0.5, "display": display}),
                 "pupil_cross": ("FLOAT", {"default": 0, "min": -15, "max": 15, "step": 0.5, "display": display}),
-                "extra_index": ("INT", {"default": 0, "min": 0, "max": 31, "step": 1, "display": display}),
+                "extra_index": ("INT", {"default": 0, "min": 0, "max": 20, "step": 1, "display": display}),
                 "extra_subindex": ("INT", {"default": 0, "min": 0, "max": 2, "step": 1, "display": display}),
                 "extra_value": ("FLOAT", {"default": 0, "min": -15, "max": 15, "step": 0.01, "display": display}),
                 "aaa": ("FLOAT", {"default": 0, "min": -30, "max": 120, "step": 1, "display": display}),

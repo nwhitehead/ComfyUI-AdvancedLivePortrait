@@ -405,7 +405,7 @@ class LP_Engine:
 
         return out_list
 
-    def calc_fe(_, x_d_new, eyes, eyebrow, wink, pupil_x, pupil_y, mouth, eee, woo, smile,
+    def calc_fe(_, x_d_new, eyes, eyebrow, wink, pupil_x, pupil_y, pupil_cross, extra_index, extra_subindex, extra_value, mouth, eee, woo, smile,
                 rotate_pitch, rotate_yaw, rotate_roll):
 
         x_d_new[0, 20, 1] += smile * -0.01
@@ -446,6 +446,8 @@ class LP_Engine:
         else:
             x_d_new[0, 11, 0] += pupil_x * 0.001
             x_d_new[0, 15, 0] += pupil_x * 0.0007
+        x_d_new[0, 11, 0] += pupil_cross * 0.001
+        x_d_new[0, 15, 0] += pupil_cross * -0.001
 
         x_d_new[0, 11, 1] += pupil_y * -0.001
         x_d_new[0, 15, 1] += pupil_y * -0.001
@@ -468,6 +470,7 @@ class LP_Engine:
             x_d_new[0, 1, 1] += eyebrow * 0.0003
             x_d_new[0, 2, 1] += eyebrow * -0.0003
 
+        x_d_new[0, extra_index, extra_subindex] += extra_value * 0.01
 
         return torch.Tensor([rotate_pitch, rotate_yaw, rotate_roll])
 g_engine = LP_Engine()
@@ -852,6 +855,10 @@ class ExpressionEditor:
                 "wink": ("FLOAT", {"default": 0, "min": 0, "max": 25, "step": 0.5, "display": display}),
                 "pupil_x": ("FLOAT", {"default": 0, "min": -15, "max": 15, "step": 0.5, "display": display}),
                 "pupil_y": ("FLOAT", {"default": 0, "min": -15, "max": 15, "step": 0.5, "display": display}),
+                "pupil_cross": ("FLOAT", {"default": 0, "min": -15, "max": 15, "step": 0.5, "display": display}),
+                "extra_index": ("INT", {"default": 0, "min": 0, "max": 31, "step": 1, "display": display}),
+                "extra_subindex": ("INT", {"default": 0, "min": 0, "max": 2, "step": 1, "display": display}),
+                "extra_value": ("FLOAT", {"default": 0, "min": -15, "max": 15, "step": 0.01, "display": display}),
                 "aaa": ("FLOAT", {"default": 0, "min": -30, "max": 120, "step": 1, "display": display}),
                 "eee": ("FLOAT", {"default": 0, "min": -20, "max": 15, "step": 0.2, "display": display}),
                 "woo": ("FLOAT", {"default": 0, "min": -20, "max": 15, "step": 0.2, "display": display}),
@@ -881,7 +888,7 @@ class ExpressionEditor:
     # INPUT_IS_LIST = False
     # OUTPUT_IS_LIST = (False,)
 
-    def run(self, rotate_pitch, rotate_yaw, rotate_roll, blink, eyebrow, wink, pupil_x, pupil_y, aaa, eee, woo, smile,
+    def run(self, rotate_pitch, rotate_yaw, rotate_roll, blink, eyebrow, wink, pupil_x, pupil_y, pupil_cross, extra_index, extra_subindex, extra_value, aaa, eee, woo, smile,
             src_ratio, sample_ratio, sample_parts, crop_factor, src_image=None, sample_image=None, motion_link=None, add_exp=None):
         rotate_yaw = -rotate_yaw
 
@@ -932,7 +939,7 @@ class ExpressionEditor:
             elif sample_parts == "OnlyEyes":
                 retargeting(es.e, self.d_info['exp'], sample_ratio, (1, 2, 11, 13, 15, 16))
 
-        es.r = g_engine.calc_fe(es.e, blink, eyebrow, wink, pupil_x, pupil_y, aaa, eee, woo, smile,
+        es.r = g_engine.calc_fe(es.e, blink, eyebrow, wink, pupil_x, pupil_y, pupil_cross, extra_index, extra_subindex, extra_value, aaa, eee, woo, smile,
                                   rotate_pitch, rotate_yaw, rotate_roll)
 
         if add_exp != None:
